@@ -1,4 +1,5 @@
 package com.example.gestion_des_absences;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,7 +12,6 @@ import java.sql.ResultSet;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import java.net.URL;
-
 public class LoginController{
         @FXML
         private Button button_connect;
@@ -24,6 +24,7 @@ public class LoginController{
 
         @FXML
         private PasswordField password;
+
 
 
 
@@ -75,7 +76,10 @@ public class LoginController{
                                         Parent root = FXMLLoader.load(getClass().getResource("main-view.fxml"));
                                         Stage stage = new Stage();
                                         Scene scene = new Scene(root);
-
+                                        Parent root1 = FXMLLoader.load(getClass().getResource("login-view.fxml"));
+                                        Stage stage1 = new Stage();
+                                        Scene scene1 = new Scene(root1);
+                                        stage1.close();
                                         root.setOnMousePressed((MouseEvent event) ->{
                                                 x = event.getSceneX();
                                                 y = event.getSceneY();
