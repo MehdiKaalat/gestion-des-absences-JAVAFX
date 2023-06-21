@@ -413,6 +413,7 @@ public class mainViewController implements Initializable {
         presene_table.setItems(filteredData);
     }
 
+
     @FXML
     void enregistrer_table(MouseEvent event) {
         LocalDate selectedDate = presence_date.getValue();
@@ -425,9 +426,10 @@ public class mainViewController implements Initializable {
             connection.setAutoCommit(false); // Disable auto-commit
 
             String sqlInsert = "INSERT INTO absence (date_abs, apogee, id_module) VALUES (?, ?, ?)";
-            String sqlCheck = "SELECT id_abs FROM absence WHERE apogee = ? AND date_abs = ? AND id_module = ?";
             PreparedStatement insertStatement = connection.prepareStatement(sqlInsert);
-            PreparedStatement checkStatement = connection.prepareStatement(sqlCheck);
+
+            String sqlDelete = "DELETE FROM absence WHERE id_abs = ?";
+            PreparedStatement deleteStatement = connection.prepareStatement(sqlDelete);
 
             for (presenceData item : data) {
                 CheckBox checkBox = item.getCheckPresence(); // Get the checkbox from the data item
@@ -436,13 +438,17 @@ public class mainViewController implements Initializable {
 
                 if (checkBox.isSelected()) {
                     // Check if the absence record already exists
+                    String sqlCheck = "SELECT id_abs FROM absence WHERE apogee = ? AND date_abs = ? AND id_module = ?";
+                    PreparedStatement checkStatement = connection.prepareStatement(sqlCheck);
+
                     checkStatement.setInt(1, apogee);
                     checkStatement.setDate(2, java.sql.Date.valueOf(selectedDate));
                     checkStatement.setInt(3, moduleId);
+
                     ResultSet resultSet = checkStatement.executeQuery();
 
                     if (!resultSet.next()) {
-                        // Insert the absence record
+                        // Insert the absence record only if it doesn't already exist
                         insertStatement.setDate(1, java.sql.Date.valueOf(selectedDate));
                         insertStatement.setInt(2, apogee);
                         insertStatement.setInt(3, moduleId);
@@ -450,12 +456,32 @@ public class mainViewController implements Initializable {
                     }
 
                     resultSet.close();
+                    checkStatement.close();
+                } else {
+                    // Delete the absence record
+                    String sqlCheck = "SELECT id_abs FROM absence WHERE apogee = ? AND date_abs = ? AND id_module = ?";
+                    PreparedStatement checkStatement = connection.prepareStatement(sqlCheck);
+
+                    checkStatement.setInt(1, apogee);
+                    checkStatement.setDate(2, java.sql.Date.valueOf(selectedDate));
+                    checkStatement.setInt(3, moduleId);
+
+                    ResultSet resultSet = checkStatement.executeQuery();
+
+                    if (resultSet.next()) {
+                        int absenceId = resultSet.getInt("id_abs");
+                        deleteStatement.setInt(1, absenceId);
+                        deleteStatement.executeUpdate();
+                    }
+
+                    resultSet.close();
+                    checkStatement.close();
                 }
             }
 
             connection.commit(); // Commit the transaction
             insertStatement.close();
-            checkStatement.close();
+            deleteStatement.close();
             connection.close();
 
             // Optional: Show a success message or perform any other desired action after saving
@@ -465,6 +491,7 @@ public class mainViewController implements Initializable {
             // Optional: Show an error message or perform any other desired action in case of an exception
         }
     }
+
 
 
 
