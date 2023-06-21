@@ -2,14 +2,14 @@ package com.example.gestion_des_absences;
 
 public class etudiantData {
     private String name;
-    private Integer apogee;
+    public Integer apogee;
     private String filiere;
     private String semestre;
 
     public etudiantData(){
         super();
     }
-    public etudiantData(String name, Integer apogee, String filiere, String semestre) {
+    public etudiantData(Integer apogee, String name, String filiere, String semestre) {
         super();
         this.name = name;
         this.apogee = apogee;
@@ -47,11 +47,6 @@ public class etudiantData {
     public void setSemestre(String semestre) {
         this.semestre = semestre;
     }
-
-
-
-
-
 
 
 

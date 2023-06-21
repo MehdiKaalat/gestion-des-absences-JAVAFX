@@ -26,7 +26,7 @@
                <top>
                   <AnchorPane prefHeight="63.0" prefWidth="800.0" style="-fx-background-color: #343C4E;" BorderPane.alignment="CENTER">
                      <children>
-                        <Button fx:id="btn_exit" layoutX="756.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#exit_fct" prefHeight="21.0" prefWidth="30.0" style="-fx-background-color: red; -fx-text-fill: white; -fx-padding: 5 10;" text="X">
+                        <Button fx:id="btn_exit" layoutX="756.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#exit_fct" prefHeight="21.0" prefWidth="30.0" style="-fx-background-color: red; -fx-text-fill: white; -fx-padding: 5 10; -fx-cursor: hand;" text="X">
                            <font>
                               <Font name="Arial Rounded MT Bold" size="16.0" />
                            </font>
@@ -36,7 +36,7 @@
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Label>
-                        <Button fx:id="btn_hide" layoutX="713.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#hide_fct" prefHeight="26.0" prefWidth="32.0" style="-fx-background-color: white; -fx-label-padding: -2;" text="―">
+                        <Button fx:id="btn_hide" layoutX="713.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#hide_fct" prefHeight="26.0" prefWidth="32.0" style="-fx-background-color: white; -fx-label-padding: -2; -fx-cursor: hand;" text="―">
                            <font>
                               <Font name="Arial Rounded MT Bold" size="16.0" />
                            </font>
@@ -234,43 +234,48 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="presence" layoutX="14.0" layoutY="18.0" prefHeight="436.0" prefWidth="603.3333333333334" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="presence" layoutX="14.0" layoutY="18.0" prefHeight="436.0" prefWidth="603.3333333333334" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <TextField layoutX="14.0" layoutY="24.0" prefHeight="25.0" prefWidth="182.0" promptText="Rechercher" />
-                              <DatePicker layoutX="208.0" layoutY="24.0" prefHeight="25.0" prefWidth="127.0" />
-                              <ComboBox layoutX="348.0" layoutY="24.0" prefHeight="25.0" prefWidth="116.0" promptText="Filière" />
-                              <ComboBox layoutX="473.0" layoutY="24.0" prefHeight="25.0" prefWidth="116.0" promptText="Module" />
+                              <TextField fx:id="presence_rechercher" layoutX="14.0" layoutY="24.0" onKeyReleased="#rechercher_etudiant" prefHeight="25.0" prefWidth="182.0" promptText="Rechercher" />
+                              <DatePicker fx:id="presence_date" layoutX="208.0" layoutY="24.0" prefHeight="25.0" prefWidth="127.0" />
+                              <ComboBox fx:id="presence_filiere" layoutX="348.0" layoutY="24.0" prefHeight="25.0" prefWidth="116.0" promptText="Filière" />
+                              <ComboBox fx:id="presence_module" layoutX="473.0" layoutY="24.0" prefHeight="25.0" prefWidth="116.0" promptText="Module" />
                               <ButtonBar layoutX="14.0" layoutY="71.0">
                                  <buttons>
-                                    <TableView prefHeight="312.0" prefWidth="577.0">
+                                    <TableView fx:id="presene_table" prefHeight="312.0" prefWidth="577.0">
                                       <columns>
-                                        <TableColumn prefWidth="99.33330059051514" text="Apogee" />
-                                        <TableColumn prefWidth="228.00006866455078" text="Nom et Prénom" />
-                                          <TableColumn prefWidth="114.0" text="Présent(e)" />
-                                          <TableColumn prefWidth="117.33334350585938" text="Nbr Absences" />
+                                        <TableColumn fx:id="presence_apogee_col" prefWidth="105.33330726623535" text="Apogee" />
+                                        <TableColumn fx:id="presence_name_col" prefWidth="200.6667022705078" text="Nom et Prénom" />
+                                          <TableColumn fx:id="presence_present_col" prefWidth="70.6666259765625" style="-fx-alignment: center;" text="Présent(e)" />
+                                          <TableColumn fx:id="presence_nbtAbs_col" prefWidth="93.33331298828125" text="Nbr Absences" />
                                       </columns>
                                     </TableView>
                                  </buttons>
                               </ButtonBar>
-                              <Button layoutX="276.0" layoutY="396.0" mnemonicParsing="false" text="Enregistrer" />
+                              <Button fx:id="enregistrer_btn" layoutX="276.0" layoutY="396.0" mnemonicParsing="false" onMouseClicked="#enregistrer_table" text="Enregistrer" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="liste_etu" prefHeight="436.0" prefWidth="603.3333333333334" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="liste_etu" prefHeight="436.0" prefWidth="603.3333333333334" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <TextField fx:id="addEtudiant_name" layoutX="114.0" layoutY="23.0" prefHeight="25.0" prefWidth="160.0" promptText="Nom et Prénom" />
                               <TextField fx:id="addEtudiant_apogee" layoutX="6.0" layoutY="23.0" prefHeight="25.0" prefWidth="102.0" promptText="Apogee" />
-                              <ComboBox fx:id="addEtudiant_filiere" layoutX="282.0" layoutY="23.0" prefHeight="25.0" prefWidth="133.0" promptText="Filière" />
-                              <ComboBox fx:id="addEtudiant_semestre" layoutX="423.0" layoutY="23.0" prefHeight="25.0" prefWidth="93.0" promptText="Semestre" />
-                              <Button fx:id="ajouter_btn" layoutX="521.0" layoutY="23.0" mnemonicParsing="false" onMouseClicked="#ViewEtudiant" prefHeight="25.0" prefWidth="77.0" text="Ajouter" />
-                              <TableView fx:id="etudiant_table" layoutY="77.0" prefHeight="359.0" prefWidth="603.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="77.0">
+                              <ComboBox fx:id="addEtudiant_filiere" layoutX="282.0" layoutY="23.0" prefHeight="25.0" prefWidth="162.0" promptText="Filière" />
+                              <ComboBox fx:id="addEtudiant_semestre" layoutX="449.0" layoutY="23.0" prefHeight="25.0" prefWidth="93.0" promptText="Semestre" />
+                              <Button fx:id="ajouter_btn" layoutX="108.0" layoutY="402.0" mnemonicParsing="false" onMouseClicked="#addEtudiantToDatabase" prefHeight="25.0" prefWidth="77.0" text="Ajouter" />
+                              <TableView fx:id="etudiant_table" layoutY="58.0" onMouseClicked="#SelectedRow" prefHeight="335.0" prefWidth="603.0" AnchorPane.bottomAnchor="43.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="58.0">
                                 <columns>
                                   <TableColumn fx:id="apogee_column" prefWidth="108.66664373874664" text="Apogee" />
-                                  <TableColumn fx:id="name_column" prefWidth="167.99994659423828" text="Nom et Prénom" />
-                                    <TableColumn fx:id="filiere_column" prefWidth="134.66671752929688" text="Filière" />
-                                    <TableColumn fx:id="semestre_column" prefWidth="105.33328247070312" text="Semestre" />
-                                    <TableColumn prefWidth="84.66664632161462" sortable="false" text="Actions" />
+                                  <TableColumn fx:id="name_column" prefWidth="186.66666412353516" text="Nom et Prénom" />
+                                    <TableColumn fx:id="filiere_column" prefWidth="139.33334350585938" text="Filière" />
+                                    <TableColumn fx:id="semestre_column" prefWidth="118.66665649414062" text="Semestre" />
                                 </columns>
                               </TableView>
+                              <Button fx:id="modifier_btn" layoutX="239.0" layoutY="402.0" mnemonicParsing="false" onMouseClicked="#ModifierEtudiant" prefHeight="25.0" prefWidth="75.0" text="Modifier" />
+                              <Button fx:id="supprimer_btn" layoutX="372.0" layoutY="402.0" mnemonicParsing="false" onMouseClicked="#SupprimerEtudiant" prefHeight="25.0" prefWidth="77.0" style="-fx-background-color: red;" text="Supprimer" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </Button>
                            </children>
                         </AnchorPane>
                         <AnchorPane fx:id="a_propos" layoutX="7.0" layoutY="14.0" prefHeight="436.0" prefWidth="603.3333333333334" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
