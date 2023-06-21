@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
@@ -334,101 +335,45 @@ public class mainViewController implements Initializable {
             e.printStackTrace();
         }
     }
-//    private void handleFiliereSelection(Connection connect) {
-//        String selectedFiliere = presence_filiere.getValue();
-//        // Clear previous module selections
-//        presence_module.getItems().clear();
-//
-//        try {
-//            // Prepare the SQL statement to retrieve modules based on filiere
-//            String sqlModule = "SELECT nom_module FROM module WHERE id_filiere = (SELECT id_filiere FROM filiere WHERE nom_filiere = ?)";
-//            PreparedStatement stat3 = connect.prepareStatement(sqlModule);
-//            stat3.setString(1, selectedFiliere);
-//            ResultSet rs3 = stat3.executeQuery();
-//            ObservableList<String> dataModule = FXCollections.observableArrayList();
-//            while (rs3.next()) {
-//                dataModule.add(rs3.getString(1));
-//            }
-//
-//            String sql = "SELECT apogee, name " +
-//                    "FROM etudiant  " +
-//                    "WHERE id_filiere = (SELECT id_filiere FROM filiere WHERE nom_filiere = ?)";
-//
-//            PreparedStatement stat = connect.prepareStatement(sql);
-//            stat.setString(1, selectedFiliere);
-//            ResultSet rs = stat.executeQuery();
-//            ObservableList<presenceData> filteredData = FXCollections.observableArrayList();
-//            while (rs.next()) {
-//                filteredData.add(new presenceData(rs.getInt(1), rs.getString(2)));
-//            }
-//            data2.clear();
-//            presence_name_col.setCellValueFactory(new PropertyValueFactory<presenceData, String>("name"));
-//            presence_apogee_col.setCellValueFactory(new PropertyValueFactory<presenceData, Integer>("apogee"));
-//            presence_present_col.setCellValueFactory(new PropertyValueFactory<presenceData, CheckBox>("checkPresence"));
-//            presene_table.setItems(filteredData);
-//
-//            // Set the result to the module list
-//            presence_module.setItems(dataModule);
-//            } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
-private void handleFiliereSelection(Connection connect) {
-    String selectedFiliere = presence_filiere.getValue();
-    // Clear previous module selections
-    presence_module.getItems().clear();
+    private void handleFiliereSelection(Connection connect) {
+        String selectedFiliere = presence_filiere.getValue();
+        // Clear previous module selections
+        presence_module.getItems().clear();
 
-    try {
-        // Prepare the SQL statement to retrieve modules based on filiere
-        String sqlModule = "SELECT nom_module FROM module WHERE id_filiere = (SELECT id_filiere FROM filiere WHERE nom_filiere = ?)";
-        PreparedStatement stat3 = connect.prepareStatement(sqlModule);
-        stat3.setString(1, selectedFiliere);
-        ResultSet rs3 = stat3.executeQuery();
-        ObservableList<String> dataModule = FXCollections.observableArrayList();
-        while (rs3.next()) {
-            dataModule.add(rs3.getString(1));
+        try {
+            // Prepare the SQL statement to retrieve modules based on filiere
+            String sqlModule = "SELECT nom_module FROM module WHERE id_filiere = (SELECT id_filiere FROM filiere WHERE nom_filiere = ?)";
+            PreparedStatement stat3 = connect.prepareStatement(sqlModule);
+            stat3.setString(1, selectedFiliere);
+            ResultSet rs3 = stat3.executeQuery();
+            ObservableList<String> dataModule = FXCollections.observableArrayList();
+            while (rs3.next()) {
+                dataModule.add(rs3.getString(1));
+            }
+
+            String sql = "SELECT apogee, name " +
+                    "FROM etudiant  " +
+                    "WHERE id_filiere = (SELECT id_filiere FROM filiere WHERE nom_filiere = ?)";
+
+            PreparedStatement stat = connect.prepareStatement(sql);
+            stat.setString(1, selectedFiliere);
+            ResultSet rs = stat.executeQuery();
+            ObservableList<presenceData> filteredData = FXCollections.observableArrayList();
+            while (rs.next()) {
+                filteredData.add(new presenceData(rs.getInt(1), rs.getString(2)));
+            }
+            data2.clear();
+            presence_name_col.setCellValueFactory(new PropertyValueFactory<presenceData, String>("name"));
+            presence_apogee_col.setCellValueFactory(new PropertyValueFactory<presenceData, Integer>("apogee"));
+            presence_present_col.setCellValueFactory(new PropertyValueFactory<presenceData, CheckBox>("checkPresence"));
+            presene_table.setItems(filteredData);
+
+            // Set the result to the module list
+            presence_module.setItems(dataModule);
+            } catch (SQLException e) {
+            e.printStackTrace();
         }
-
-        String sql = "SELECT e.apogee, e.name, a.date " +
-                "FROM etudiant e " +
-                "LEFT JOIN absence a ON e.apogee = a.apogee " +
-                "AND a.date = ? " +
-                "WHERE e.id_filiere = (SELECT id_filiere FROM filiere WHERE nom_filiere = ?)";
-
-        PreparedStatement stat = connect.prepareStatement(sql);
-        // Get the selected date from the DatePicker within the TableView
-        LocalDate selectedDate = presene_table.getItems().get(0).getDatePicker().getValue();
-        java.sql.Date sqlDate = java.sql.Date.valueOf(selectedDate);
-        stat.setDate(1, sqlDate);
-        stat.setString(2, selectedFiliere);
-
-        ResultSet rs = stat.executeQuery();
-        ObservableList<presenceData> filteredData = FXCollections.observableArrayList();
-        while (rs.next()) {
-            int apogee = rs.getInt(1);
-            String name = rs.getString(2);
-            Date absenceDate = rs.getDate(3);
-            boolean isPresent = absenceDate != null && absenceDate.toLocalDate().equals(selectedDate);
-            filteredData.add(new presenceData(apogee, name, isPresent));
-        }
-        data2.clear();
-        presence_name_col.setCellValueFactory(new PropertyValueFactory<presenceData, String>("name"));
-        presence_apogee_col.setCellValueFactory(new PropertyValueFactory<presenceData, Integer>("apogee"));
-        presence_present_col.setCellFactory(col -> {
-            CheckBoxTableCell<presenceData, Boolean> cell = new CheckBoxTableCell<>();
-            cell.setAlignment(Pos.CENTER);
-            return cell;
-        });
-        presene_table.setItems(filteredData);
-
-        // Set the result to the module list
-        presence_module.setItems(dataModule);
-    } catch (SQLException e) {
-        e.printStackTrace();
     }
-}
-
-
 
 
     @FXML

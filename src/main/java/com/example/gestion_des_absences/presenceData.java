@@ -18,6 +18,10 @@ public class presenceData {
         this.apogee = apogee;
         this.checkPresence = new CheckBox();
     }
+
+    public presenceData(int apogee, String name, boolean isPresent) {
+    }
+
     public String getName() {
         return name;
     }
