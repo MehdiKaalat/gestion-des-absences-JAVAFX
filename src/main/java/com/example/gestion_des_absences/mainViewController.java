@@ -25,6 +25,8 @@ import java.sql.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static javax.swing.JOptionPane.showMessageDialog;
@@ -411,7 +413,6 @@ public class mainViewController implements Initializable {
         presene_table.setItems(filteredData);
     }
 
-
     @FXML
     void enregistrer_table(MouseEvent event) {
         LocalDate selectedDate = presence_date.getValue();
@@ -424,9 +425,9 @@ public class mainViewController implements Initializable {
             connection.setAutoCommit(false); // Disable auto-commit
 
             String sqlInsert = "INSERT INTO absence (date_abs, apogee, id_module) VALUES (?, ?, ?)";
-            String sqlDelete = "DELETE FROM absence WHERE id_absence = ?";
+            String sqlCheck = "SELECT id_abs FROM absence WHERE apogee = ? AND date_abs = ? AND id_module = ?";
             PreparedStatement insertStatement = connection.prepareStatement(sqlInsert);
-            PreparedStatement deleteStatement = connection.prepareStatement(sqlDelete);
+            PreparedStatement checkStatement = connection.prepareStatement(sqlCheck);
 
             for (presenceData item : data) {
                 CheckBox checkBox = item.getCheckPresence(); // Get the checkbox from the data item
@@ -434,21 +435,27 @@ public class mainViewController implements Initializable {
                 int moduleId = getModuleId(selectedModule, connection);
 
                 if (checkBox.isSelected()) {
-                    insertStatement.setDate(1, java.sql.Date.valueOf(selectedDate));
-                    insertStatement.setInt(2, apogee);
-                    insertStatement.setInt(3, moduleId);
-                    insertStatement.executeUpdate();
-                } else {
-                    // Delete the id_absence from the absence table
-                    int absenceId = item.getIdAbsence();
-                    deleteStatement.setInt(1, absenceId);
-                    deleteStatement.executeUpdate();
+                    // Check if the absence record already exists
+                    checkStatement.setInt(1, apogee);
+                    checkStatement.setDate(2, java.sql.Date.valueOf(selectedDate));
+                    checkStatement.setInt(3, moduleId);
+                    ResultSet resultSet = checkStatement.executeQuery();
+
+                    if (!resultSet.next()) {
+                        // Insert the absence record
+                        insertStatement.setDate(1, java.sql.Date.valueOf(selectedDate));
+                        insertStatement.setInt(2, apogee);
+                        insertStatement.setInt(3, moduleId);
+                        insertStatement.executeUpdate();
+                    }
+
+                    resultSet.close();
                 }
             }
 
             connection.commit(); // Commit the transaction
             insertStatement.close();
-            deleteStatement.close();
+            checkStatement.close();
             connection.close();
 
             // Optional: Show a success message or perform any other desired action after saving
@@ -458,6 +465,9 @@ public class mainViewController implements Initializable {
             // Optional: Show an error message or perform any other desired action in case of an exception
         }
     }
+
+
+
 
     private int getModuleId(String moduleName, Connection connection) throws SQLException {
         String sql = "SELECT id_module FROM module WHERE nom_module = ?";
@@ -475,6 +485,62 @@ public class mainViewController implements Initializable {
 
         return moduleId;
     }
+
+    @FXML
+    void retrieveSelectedCheckboxes(LocalDate selectedDate) {
+        String selectedModule = presence_module.getValue();
+        TableView<presenceData> tableView = presene_table;
+        ObservableList<presenceData> data = tableView.getItems();
+
+        try {
+            Connection connection = database.connectDB();
+            String sqlSelectModuleId = "SELECT id_module FROM module WHERE nom_module = ?";
+            PreparedStatement selectModuleIdStatement = connection.prepareStatement(sqlSelectModuleId);
+            selectModuleIdStatement.setString(1, selectedModule);
+            ResultSet moduleResultSet = selectModuleIdStatement.executeQuery();
+
+            int moduleId = -1; // Default value if module not found
+            if (moduleResultSet.next()) {
+                moduleId = moduleResultSet.getInt("id_module");
+            }
+
+            moduleResultSet.close();
+            selectModuleIdStatement.close();
+
+            String sqlSelect = "SELECT apogee FROM absence WHERE date_abs = ? AND id_module = ?";
+            PreparedStatement selectStatement = connection.prepareStatement(sqlSelect);
+            selectStatement.setDate(1, java.sql.Date.valueOf(selectedDate));
+            selectStatement.setInt(2, moduleId);
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            List<Integer> apogeeList = new ArrayList<>();
+            while (resultSet.next()) {
+                int apogee = resultSet.getInt("apogee");
+                apogeeList.add(apogee);
+            }
+
+            resultSet.close();
+            selectStatement.close();
+            connection.close();
+
+            for (presenceData item : data) {
+                CheckBox checkBox = item.getCheckPresence(); // Get the checkbox from the data item
+                int apogee = item.getApogee();
+
+                if (apogeeList.contains(apogee)) {
+                    checkBox.setSelected(true);
+                } else {
+                    checkBox.setSelected(false);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Optional: Show an error message or perform any other desired action in case of an exception
+        }
+    }
+
+
     @FXML
     void afficher_accueil(MouseEvent event) {
         accueil.setVisible(true);
@@ -529,5 +595,17 @@ public class mainViewController implements Initializable {
         ViewEtudiant_presence();
         // Add event handler for filiere selection
         presence_filiere.setOnAction(event -> handleFiliereSelection(connect));
+        presence_date.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                retrieveSelectedCheckboxes(newValue);
+            }
+        });
+        // Add a listener to the presence_module ComboBox value property
+        presence_module.valueProperty().addListener((observable, oldValue, newValue) -> {
+            LocalDate selectedDate = presence_date.getValue();
+            if (selectedDate != null) {
+                retrieveSelectedCheckboxes(selectedDate);
+            }
+        });
     }
 }

@@ -6,9 +6,10 @@ import java.net.HttpCookie;
 
 public class presenceData {
     private String name;
-    private static Integer apogee;
-    private static CheckBox checkPresence;
+    private Integer apogee;
+    private CheckBox checkPresence;
     private int idAbsence;
+    private int nbtAbs;
     public presenceData(){
         super();
     }
@@ -17,9 +18,18 @@ public class presenceData {
         this.name = name;
         this.apogee = apogee;
         this.checkPresence = new CheckBox();
+        this.nbtAbs = nbtAbs;
     }
 
-    public presenceData(int apogee, String name, boolean isPresent) {
+    public int getNbAbs() {
+        return nbtAbs;
+    }
+
+    public void setNbAbs(int nbtAbs) {
+        this.nbtAbs = nbtAbs;
+    }
+
+    public presenceData(int apogee, String name, int nbtAbs) {
     }
 
     public String getName() {
@@ -30,7 +40,7 @@ public class presenceData {
         this.name = name;
     }
 
-    public static int getApogee() {
+    public int getApogee() {
         return apogee;
     }
     public int getIdAbsence() {
@@ -45,7 +55,7 @@ public class presenceData {
         this.apogee = apogee;
     }
 
-    public static CheckBox getCheckPresence() {
+    public CheckBox getCheckPresence() {
         return checkPresence;
     }
 
