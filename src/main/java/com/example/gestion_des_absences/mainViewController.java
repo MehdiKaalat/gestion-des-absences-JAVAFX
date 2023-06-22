@@ -4,9 +4,12 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -18,6 +21,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.awt.event.ActionEvent;
 import java.net.URL;
@@ -79,8 +83,6 @@ public class mainViewController implements Initializable {
     @FXML
     private Button ajouter_btn;
 
-
-
     @FXML
     private TableView<etudiantData> etudiant_table;
 
@@ -125,6 +127,33 @@ public class mainViewController implements Initializable {
 
     @FXML
     private TableColumn<presenceData, Integer> presence_apogee_col;
+
+    @FXML
+    private Label nb_absence;
+
+    @FXML
+    private Label nb_classe;
+
+    @FXML
+    private Label nb_etudiant;
+
+    @FXML
+    private Label nb_filiere;
+
+    @FXML
+    private Label nom_prof;
+
+    @FXML
+    private Label IDProf_label;
+
+    @FXML
+    private Label emailProf_label;
+
+    @FXML
+    private Label nomProf_label;
+
+    @FXML
+    private Label deconnecter_btn;
 
     String usernameLogin = DataHolder.getUsername();
     public ObservableList<etudiantData> data = FXCollections.observableArrayList();
@@ -599,10 +628,33 @@ public class mainViewController implements Initializable {
         liste_etu.setVisible(false);
         presence.setVisible(false);
     }
-
     @FXML
     void deconnecter_fct(MouseEvent event) throws IOException {
+        deconnecter_btn.getScene().getWindow().hide();
+        Parent root = FXMLLoader.load(getClass().getResource("login-view.fxml"));
+        Stage stage = new Stage();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.initStyle(StageStyle.UNDECORATED);
+        stage.show();
+
+        // Optional: Close the current stage if needed
+        Stage currentStage = (Stage) deconnecter_btn.getScene().getWindow();
+        currentStage.close();
+
+        // Optional: Make the new stage draggable
+        final double initialX = event.getSceneX();
+        final double initialY = event.getSceneY();
+
+        root.setOnMousePressed((MouseEvent mouseEvent) -> {
+            final double xOffset = mouseEvent.getSceneX() - initialX;
+            final double yOffset = mouseEvent.getSceneY() - initialY;
+            stage.setX(mouseEvent.getScreenX() - xOffset);
+            stage.setY(mouseEvent.getScreenY() - yOffset);
+        });
     }
+
+
     @FXML
     void exit_fct(MouseEvent event) {
         Platform.exit();
@@ -613,7 +665,111 @@ public class mainViewController implements Initializable {
         Stage stage = (Stage) btn_hide.getScene().getWindow();
         stage.setIconified(true);
     }
+    void fct_nbEtudiant(){
+        Connection connect = database.connectDB();
+        String sql = "SELECT count(DISTINCT etudiant.apogee) AS nb_etu FROM etudiant JOIN module ON module.id_filiere = etudiant.id_filiere JOIN semestre ON module.id_semestre = etudiant.id_semestre JOIN professeur ON module.id_prof = professeur.id_prof WHERE professeur.id_prof = '"+usernameLogin+"'";
+        try {
+            PreparedStatement stat = connect.prepareStatement(sql);
+            ResultSet rs = stat.executeQuery(); // Execute the query and get the result set
+            if (rs.next()) {
+                String nb_Etu = rs.getString("nb_etu"); // Get the value of the "nb_etu"
+                nb_etudiant.setText(nb_Etu); // Set the value to the label "nb_Etu"
+            }
+            rs.close(); // Close the result set
+            stat.close(); // Close the prepared statement
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+        void fct_nbClasse(){
+        Connection connect = database.connectDB();
+        String sql = "SELECT COUNT(DISTINCT(id_module)) AS nb_mod FROM module WHERE id_prof = '"+usernameLogin+"'";
+        try {
+            PreparedStatement stat = connect.prepareStatement(sql);
+            ResultSet rs = stat.executeQuery(); // Execute the query and get the result set
+            if (rs.next()) {
+                String nb_Classe = rs.getString("nb_mod"); // Get the value of the "nb_etu"
+                nb_classe.setText(nb_Classe); // Set the value to the label "nb_Etu"
+            }
+            rs.close(); // Close the result set
+            stat.close(); // Close the prepared statement
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+    void fct_nomProf() {
+        Connection connect = database.connectDB();
+        String sql = "SELECT name_prof FROM professeur WHERE id_prof = ?";
+        try {
+            PreparedStatement stat = connect.prepareStatement(sql);
+            stat.setString(1, usernameLogin);
+            ResultSet rs = stat.executeQuery(); // Execute the query and get the result set
+            if (rs.next()) {
+                String nameProf = rs.getString("name_prof"); // Get the value of the "name_prof" column
+                nom_prof.setText(nameProf); // Set the value to the label "nom_prof"
+            }
+            rs.close(); // Close the result set
+            stat.close(); // Close the prepared statement
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    void fct_nbFiliere() {
+        Connection connect = database.connectDB();
+        String sql = "SELECT COUNT(DISTINCT(filiere.id_filiere)) AS nb_f FROM filiere JOIN module on module.id_filiere = filiere.id_filiere JOIN professeur on professeur.id_prof = module.id_prof WHERE professeur.id_prof = '"+usernameLogin+"'";
+        try {
+            PreparedStatement stat = connect.prepareStatement(sql);
+            ResultSet rs = stat.executeQuery(); // Execute the query and get the result set
+            if (rs.next()) {
+                int nbFiliere = rs.getInt("nb_f"); // Get the value of the "nb_f" column
+                nb_filiere.setText(String.valueOf(nbFiliere)); // Set the value to the label "nom_prof"
+            }
+            rs.close(); // Close the result set
+            stat.close(); // Close the prepared statement
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    void fct_nbAbsence() {
+        Connection connect = database.connectDB();
+        String sql = "SELECT COUNT(DISTINCT(absence.id_abs)) AS nb_abs FROM absence JOIN module on module.id_module = absence.id_module JOIN professeur on professeur.id_prof = module.id_prof WHERE professeur.id_prof = '"+usernameLogin+"'";
+        try {
+            PreparedStatement stat = connect.prepareStatement(sql);
+            ResultSet rs = stat.executeQuery(); // Execute the query and get the result set
+            if (rs.next()) {
+                int nbAbsence = rs.getInt("nb_abs"); // Get the value of the "nb_f" column
+                nb_absence.setText(String.valueOf(nbAbsence)); // Set the value to the label "nom_prof"
+            }
+            rs.close(); // Close the result set
+            stat.close(); // Close the prepared statement
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void fct_apropos() {
+        Connection connect = database.connectDB();
+        String sql = "SELECT id_prof, name_prof, email_prof FROM professeur WHERE professeur.id_prof = '"+usernameLogin+"'";
+        try {
+            PreparedStatement stat = connect.prepareStatement(sql);
+            ResultSet rs = stat.executeQuery(); // Execute the query and get the result set
+            if (rs.next()) {
+                int idProf = rs.getInt("id_prof");
+                IDProf_label.setText(String.valueOf(idProf));
+
+                String nomProf = rs.getString("name_prof");
+                nomProf_label.setText(String.valueOf(nomProf));
+
+                String emailProf = rs.getString("email_prof");
+                emailProf_label.setText(String.valueOf(emailProf));
+            }
+            rs.close(); // Close the result set
+            stat.close(); // Close the prepared statement
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Connection connect = database.connectDB();
@@ -634,5 +790,11 @@ public class mainViewController implements Initializable {
                 retrieveSelectedCheckboxes(selectedDate);
             }
         });
+        fct_nomProf();
+        fct_nbEtudiant();
+        fct_nbClasse();
+        fct_nbFiliere();
+        fct_nbAbsence();
+        fct_apropos();
     }
 }

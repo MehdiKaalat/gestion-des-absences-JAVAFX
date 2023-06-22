@@ -66,7 +66,8 @@ public class LoginController{
                         }
                         else{
                                 if(result.next()){
-                                        DataHolder.setUsername(String.valueOf(username));
+                                        String username_prof = username.getText();
+                                        DataHolder.setUsername(String.valueOf(username_prof));
                                         alert = new Alert(Alert.AlertType.INFORMATION);
                                         alert.setTitle("Information Message");
                                         alert.setHeaderText(null);
@@ -77,7 +78,6 @@ public class LoginController{
                                         Parent root = FXMLLoader.load(getClass().getResource("main-view.fxml"));
                                         Stage stage = new Stage();
                                         Scene scene = new Scene(root);
-                                        Parent root1 = FXMLLoader.load(getClass().getResource("login-view.fxml"));
                                         Stage stage1 = new Stage();
                                         stage1.close();
                                         root.setOnMousePressed((MouseEvent event) ->{

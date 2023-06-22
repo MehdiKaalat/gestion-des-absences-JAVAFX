@@ -2,3 +2,18 @@
     -fx-background-color: #1e90ff;
     -fx-cursor : hand;
 }
+.btn_accueil:hover{
+    -fx-background-color:  #2da9d2;
+}
+.btn_presence:hover{
+    -fx-background-color:  #2da9d2;
+}
+.btn_liste:hover{
+    -fx-background-color:  #2da9d2;
+}
+.btn_apropos:hover{
+    -fx-background-color:  #2da9d2;
+}
+.btn_deconnecter:hover{
+    -fx-background-color:  #2da9d2;
+}
