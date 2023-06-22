@@ -19,6 +19,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.converter.IntegerStringConverter;
 
 import java.net.URL;
 import java.sql.*;
@@ -437,6 +439,7 @@ public class mainViewController implements Initializable {
             presence_apogee_col.setCellValueFactory(new PropertyValueFactory<>("apogee"));
             presence_present_col.setCellValueFactory(new PropertyValueFactory<>("checkPresence"));
             presence_nbtAbs_col.setCellValueFactory(new PropertyValueFactory<>("nbtAbs"));
+            presence_nbtAbs_col.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
             presene_table.setItems(data);
             LocalDate selectedDate = presence_date.getValue();
             if (selectedDate != null) {
@@ -447,8 +450,6 @@ public class mainViewController implements Initializable {
             e.printStackTrace();
         }
     }
-
-
 
     @FXML
     private void rechercher_etudiant(KeyEvent event) {
@@ -550,17 +551,14 @@ public class mainViewController implements Initializable {
                     checkStatement.close();
                 }
             }
-
-            connection.commit(); // Commit the transaction
+            connection.commit();
+            data.clear();
+            handleModuleSelection(connection);
             insertStatement.close();
             deleteStatement.close();
             connection.close();
-
-            // Optional: Show a success message or perform any other desired action after saving
-
         } catch (SQLException e) {
             e.printStackTrace();
-            // Optional: Show an error message or perform any other desired action in case of an exception
         }
     }
 
@@ -632,7 +630,6 @@ public class mainViewController implements Initializable {
                     checkBox.setSelected(false);
                 }
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
             // Optional: Show an error message or perform any other desired action in case of an exception
@@ -821,6 +818,7 @@ public class mainViewController implements Initializable {
         ViewEtudiant_presence();
         // Add event handler for filiere selection
         presence_filiere.setOnAction(event -> handleFiliereSelection(connect));
+        presence_module.setOnAction(event -> handleModuleSelection(connect));
         presence_date.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 retrieveSelectedCheckboxes(newValue);
@@ -833,7 +831,6 @@ public class mainViewController implements Initializable {
                 retrieveSelectedCheckboxes(selectedDate);
             }
         });
-        presence_module.setOnAction(event -> handleModuleSelection(connect));
 
         fct_nomProf();
         fct_nbEtudiant();

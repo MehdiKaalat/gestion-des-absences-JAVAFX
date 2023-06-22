@@ -9,7 +9,7 @@ public class presenceData {
     private Integer apogee;
     private CheckBox checkPresence;
     private int idAbsence;
-
+    public int nbtAbs;
 
     public presenceData(){
         super();
@@ -23,7 +23,13 @@ public class presenceData {
 
     //nb absence
 
+    public int getNbtAbs() {
+        return nbtAbs;
+    }
 
+    public void setNbtAbs(int nbtAbs) {
+        this.nbtAbs = nbtAbs;
+    }
 
     // name
     public String getName() {
