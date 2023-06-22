@@ -6,14 +6,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
@@ -23,7 +20,6 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.sql.*;
 
@@ -334,38 +330,43 @@ public class mainViewController implements Initializable {
         }
     }
 
-    public void ViewEtudiant_presence(){
-        try{
+    public void ViewEtudiant_presence() {
+        try {
             Connection connect = database.connectDB();
-            String sql  = """
-                    SELECT DISTINCT apogee,name
-                    FROM etudiant
-                    """;
+            String sql = """
+                SELECT DISTINCT apogee, name
+                FROM etudiant
+                """;
             PreparedStatement stat = connect.prepareStatement(sql);
             ResultSet rs = stat.executeQuery();
 
-            while(rs.next()){
-                data2.add(new presenceData(rs.getInt(1),
-                        rs.getString(2)));
+            ObservableList dataAbs = FXCollections.observableArrayList();
+            while (rs.next()) {
+                int apogee = rs.getInt(1);
+                String name = rs.getString(2);
+                data2.add(new presenceData(apogee, name)); // Updated presenceData constructor
             }
+
             presence_name_col.setCellValueFactory(new PropertyValueFactory<presenceData, String>("name"));
             presence_apogee_col.setCellValueFactory(new PropertyValueFactory<presenceData, Integer>("apogee"));
             presence_present_col.setCellValueFactory(new PropertyValueFactory<presenceData, CheckBox>("checkPresence"));
             presene_table.setItems(data2);
+
             // filiere
             String SqlFiliere = "SELECT nom_filiere FROM filiere";
             PreparedStatement stat2 = connect.prepareStatement(SqlFiliere);
             ResultSet rs2 = stat2.executeQuery();
             ObservableList dataFiliere = FXCollections.observableArrayList();
-            while (rs2.next()){
-                dataFiliere.add(new String((rs2.getString(1))));
+            while (rs2.next()) {
+                dataFiliere.add(rs2.getString(1));
             }
             presence_filiere.setItems(dataFiliere);
 
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
     private void handleFiliereSelection(Connection connect) {
         String selectedFiliere = presence_filiere.getValue();
         // Clear previous module selections
@@ -405,6 +406,48 @@ public class mainViewController implements Initializable {
             e.printStackTrace();
         }
     }
+    // Helper method to get absence count for a given apogee
+    private void handleModuleSelection(Connection connect) {
+        String selectedFiliere = presence_filiere.getValue();
+        String selectedModule = presence_module.getValue();
+        try {
+            String sql = """
+                SELECT etudiant.apogee, etudiant.name, COUNT(absence.id_abs) as nbtAbs
+                FROM etudiant
+                LEFT JOIN module ON etudiant.id_semestre = module.id_semestre
+                LEFT JOIN absence ON etudiant.apogee = absence.apogee AND module.id_module = absence.id_module
+                LEFT JOIN filiere ON etudiant.id_filiere = filiere.id_filiere
+                WHERE module.nom_module = ?
+                AND filiere.nom_filiere = ?
+                GROUP BY etudiant.apogee, etudiant.name;
+                """;
+
+            PreparedStatement stat = connect.prepareStatement(sql);
+            stat.setString(1, selectedModule);
+            stat.setString(2, selectedFiliere);
+            ResultSet rs = stat.executeQuery();
+            ObservableList<presenceData> data = FXCollections.observableArrayList();
+            while (rs.next()) {
+                int apogee = rs.getInt("apogee");
+                String name = rs.getString("name");
+                int nbtAbs = rs.getInt("nbtAbs");
+                data.add(new presenceDataWithNbtAbs(apogee, name, nbtAbs));
+            }
+            presence_name_col.setCellValueFactory(new PropertyValueFactory<>("name"));
+            presence_apogee_col.setCellValueFactory(new PropertyValueFactory<>("apogee"));
+            presence_present_col.setCellValueFactory(new PropertyValueFactory<>("checkPresence"));
+            presence_nbtAbs_col.setCellValueFactory(new PropertyValueFactory<>("nbtAbs"));
+            presene_table.setItems(data);
+            LocalDate selectedDate = presence_date.getValue();
+            if (selectedDate != null) {
+                retrieveSelectedCheckboxes(selectedDate);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
     @FXML
@@ -790,6 +833,8 @@ public class mainViewController implements Initializable {
                 retrieveSelectedCheckboxes(selectedDate);
             }
         });
+        presence_module.setOnAction(event -> handleModuleSelection(connect));
+
         fct_nomProf();
         fct_nbEtudiant();
         fct_nbClasse();

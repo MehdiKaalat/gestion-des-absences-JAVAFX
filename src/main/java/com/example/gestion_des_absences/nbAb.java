@@ -2,27 +2,33 @@ package com.example.gestion_des_absences;
 
 import javafx.scene.control.CheckBox;
 
-import java.net.HttpCookie;
-
-public class presenceData {
+public class nbAb {
     private String name;
     private Integer apogee;
     private CheckBox checkPresence;
     private int idAbsence;
 
+    private int nbtAbs;
 
-    public presenceData(){
+    public nbAb(){
         super();
     }
-    public presenceData(Integer apogee, String name) {
+    public nbAb(Integer apogee, String name, int nbtAbs) {
         super();
         this.name = name;
         this.apogee = apogee;
         this.checkPresence = new CheckBox();
+        this.nbtAbs = nbtAbs;
     }
 
     //nb absence
+    public int getNbAbs() {
+        return nbtAbs;
+    }
 
+    public void setNbAbs(int nbtAbs) {
+        this.nbtAbs = nbtAbs;
+    }
 
 
     // name
@@ -59,7 +65,5 @@ public class presenceData {
     public void setCheckPresence(CheckBox checkPresence) {
         this.checkPresence = checkPresence;
     }
-
-
 
 }
