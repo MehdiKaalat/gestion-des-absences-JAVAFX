@@ -42,23 +42,8 @@ public class mainViewController implements Initializable {
     @FXML // fx:id="accueil"
     private AnchorPane accueil; // Value injected by FXMLLoader
 
-    @FXML // fx:id="btn_accueil"
-    private Pane btn_accueil; // Value injected by FXMLLoader
-
-    @FXML // fx:id="btn_exit"
-    private Button btn_exit; // Value injected by FXMLLoader
-
     @FXML // fx:id="btn_hide"
     private Button btn_hide; // Value injected by FXMLLoader
-
-    @FXML // fx:id="btn_liste_etu"
-    private Pane btn_liste_etu; // Value injected by FXMLLoader
-
-    @FXML // fx:id="btn_presence"
-    private Pane btn_presence; // Value injected by FXMLLoader
-
-    @FXML // fx:id="btn_propos"
-    private Pane btn_propos; // Value injected by FXMLLoader
 
     @FXML // fx:id="liste_etu"
     private AnchorPane liste_etu; // Value injected by FXMLLoader
@@ -78,8 +63,6 @@ public class mainViewController implements Initializable {
     @FXML
     private ComboBox<String> addEtudiant_semestre;
 
-    @FXML
-    private Button ajouter_btn;
 
     @FXML
     private TableView<etudiantData> etudiant_table;
@@ -110,9 +93,6 @@ public class mainViewController implements Initializable {
 
     @FXML
     private TableView<presenceData> presene_table;
-
-    @FXML
-    private TableColumn<etudiantData, String> actions_column;
 
     @FXML
     private TableColumn<presenceData, String> presence_name_col;
@@ -204,7 +184,6 @@ public class mainViewController implements Initializable {
         semestre_column.setCellValueFactory(new PropertyValueFactory<etudiantData, String>("semestre"));
         etudiant_table.setItems(data);
     }
-
     @FXML
     void addEtudiantToDatabase(MouseEvent event) {
         try {
@@ -270,11 +249,16 @@ public class mainViewController implements Initializable {
             addEtudiant_name.clear();
             addEtudiant_filiere.setValue(null);
             addEtudiant_semestre.setValue(null);
-        }catch (SQLException e){
+        }catch (Exception e) {
             e.printStackTrace();
+            // Display an error message
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setHeaderText("Une erreur s'est produite");
+            alert.setContentText("Une erreur s'est produite lors de suppression des données. Veuillez réessayer.");
+            alert.showAndWait();
         }
     }
-
     @FXML
     void ModifierEtudiant(MouseEvent event) {
         try {
@@ -296,7 +280,7 @@ public class mainViewController implements Initializable {
 
             if (count == 0) {
                 // The apogee value doesn't exist, show an error message
-                showMessageDialog(null,"Apogee spécifiée n'existe pas. Impossible de mettre à jour.");
+                showMessageDialog(null, "Apogee spécifiée n'existe pas. Impossible de mettre à jour.");
             } else {
                 // The apogee value exists, proceed with the update
                 String etudiantQuery = "UPDATE etudiant " +
@@ -321,11 +305,16 @@ public class mainViewController implements Initializable {
             }
 
             connect.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            // Display an error message
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setHeaderText("Une erreur s'est produite");
+            alert.setContentText("Une erreur s'est produite lors de modification des données. Veuillez réessayer.");
+            alert.showAndWait();
         }
     }
-
     public void ViewEtudiant_presence() {
         try {
             Connection connect = database.connectDB();
@@ -359,7 +348,6 @@ public class mainViewController implements Initializable {
             e.printStackTrace();
         }
     }
-
     private void handleFiliereSelection(Connection connect) {
         String selectedFiliere = presence_filiere.getValue();
         // Clear previous module selections
@@ -440,7 +428,6 @@ public class mainViewController implements Initializable {
             e.printStackTrace();
         }
     }
-
     @FXML
     private void rechercher_etudiant(KeyEvent event) {
         try {
@@ -475,8 +462,6 @@ public class mainViewController implements Initializable {
         data2.clear();
         presene_table.setItems(filteredData);
     }
-
-
     @FXML
     void enregistrer_table(MouseEvent event) {
         LocalDate selectedDate = presence_date.getValue();
@@ -547,15 +532,16 @@ public class mainViewController implements Initializable {
             insertStatement.close();
             deleteStatement.close();
             connection.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            // Display an error message
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setHeaderText("Une erreur s'est produite");
+            alert.setContentText("Une erreur s'est produite lors de l'enregistrement des données. Veuillez réessayer.");
+            alert.showAndWait();
         }
     }
-
-
-
-
-
     private int getModuleId(String moduleName, Connection connection) throws SQLException {
         String sql = "SELECT id_module FROM module WHERE nom_module = ?";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -633,6 +619,10 @@ public class mainViewController implements Initializable {
         a_propos.setVisible(false);
         liste_etu.setVisible(false);
         presence.setVisible(false);
+        fct_nbEtudiant();
+        fct_nbClasse();
+        fct_nbFiliere();
+        fct_nbAbsence();
     }
 
     @FXML
@@ -649,6 +639,7 @@ public class mainViewController implements Initializable {
         a_propos.setVisible(false);
         liste_etu.setVisible(false);
         presence.setVisible(true);
+        ViewEtudiant_presence();
     }
 
     @FXML
@@ -804,8 +795,8 @@ public class mainViewController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Connection connect = database.connectDB();
         ViewEtudiant();
-        SelectedRow();
         ViewEtudiant_presence();
+        SelectedRow();
         // Add event handler for filiere selection
         presence_filiere.setOnAction(event -> handleFiliereSelection(connect));
         presence_module.setOnAction(event -> handleModuleSelection(connect));
