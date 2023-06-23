@@ -76,7 +76,7 @@
                            </font>
                         </Label>
                         <Line endX="59.66667175292969" layoutX="114.0" layoutY="137.0" startX="-79.00000762939453" stroke="WHITE" />
-                        <Pane fx:id="btn_presence" layoutX="1.0" layoutY="192.0" onMouseClicked="#afficher_presence" prefHeight="43.0" prefWidth="195.0" style="-fx-cursor: hand;" styleClass="btn_presence">
+                        <Pane fx:id="btn_presence" layoutX="1.0" layoutY="192.0" onMouseClicked="#afficher_presence" prefHeight="43.0" prefWidth="193.0" style="-fx-cursor: hand;" styleClass="btn_presence">
                            <children>
                               <ImageView fitHeight="21.0" fitWidth="22.0" layoutX="14.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -90,7 +90,7 @@
                               </Label>
                            </children>
                         </Pane>
-                        <Pane fx:id="btn_liste_etu" layoutX="3.0" layoutY="235.0" onMouseClicked="#afficher_liste_etu" prefHeight="43.0" prefWidth="191.0" style="-fx-cursor: hand;" styleClass="btn_liste">
+                        <Pane fx:id="btn_liste_etu" layoutX="3.0" layoutY="235.0" onMouseClicked="#afficher_liste_etu" prefHeight="43.0" prefWidth="192.0" style="-fx-cursor: hand;" styleClass="btn_liste">
                            <children>
                               <ImageView fitHeight="21.0" fitWidth="22.0" layoutX="14.0" layoutY="13.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -104,7 +104,7 @@
                               </Label>
                            </children>
                         </Pane>
-                        <Pane fx:id="btn_propos" layoutX="1.0" layoutY="278.0" onMouseClicked="#afficher_propos" prefHeight="43.0" prefWidth="195.0" style="-fx-cursor: hand;" styleClass="btn_apropos">
+                        <Pane fx:id="btn_propos" layoutX="1.0" layoutY="278.0" onMouseClicked="#afficher_propos" prefHeight="43.0" prefWidth="193.0" style="-fx-cursor: hand;" styleClass="btn_apropos">
                            <children>
                               <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="14.0" layoutY="16.0" pickOnBounds="true" preserveRatio="true">
                                  <image>

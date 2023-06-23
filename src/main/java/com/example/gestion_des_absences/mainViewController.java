@@ -160,17 +160,12 @@ public class mainViewController implements Initializable {
     public void ViewEtudiant(){
         try{
             Connection connect = database.connectDB();
-            String sql  = """
-                    SELECT DISTINCT etudiant.apogee, etudiant.name, filiere.nom_filiere, semestre.name_semestre
-                    FROM etudiant
-                    JOIN filiere ON etudiant.id_filiere = filiere.id_filiere
-                    JOIN semestre ON etudiant.id_semestre = semestre.id_semestre
-                    """;
+            String sql  = "SELECT DISTINCT etudiant.apogee, etudiant.name, filiere.nom_filiere, semestre.name_semestre FROM etudiant JOIN filiere ON etudiant.id_filiere = filiere.id_filiere JOIN semestre ON etudiant.id_semestre = semestre.id_semestre JOIN module ON module.id_filiere = etudiant.id_filiere AND module.id_semestre = etudiant.id_semestre WHERE module.id_prof= '"+usernameLogin+"'";
             PreparedStatement stat = connect.prepareStatement(sql);
             ResultSet rs = stat.executeQuery();
 
             // filiere
-            String SqlFiliere = "SELECT nom_filiere FROM filiere";
+            String SqlFiliere = "SELECT DISTINCT(filiere.nom_filiere) FROM filiere JOIN module ON module.id_filiere = filiere.id_filiere WHERE module.id_prof = '"+usernameLogin+"'";
             PreparedStatement stat2 = connect.prepareStatement(SqlFiliere);
             ResultSet rs2 = stat2.executeQuery();
 
@@ -182,7 +177,7 @@ public class mainViewController implements Initializable {
 
             // semestre
 
-            String SqlSemestre = "SELECT name_semestre FROM semestre";
+            String SqlSemestre = "SELECT DISTINCT(semestre.name_semestre) FROM semestre JOIN module ON module.id_semestre = semestre.id_semestre WHERE module.id_prof = '"+usernameLogin+"'";
             PreparedStatement stat3 = connect.prepareStatement(SqlSemestre);
             ResultSet rs3 = stat3.executeQuery();
 
@@ -317,7 +312,6 @@ public class mainViewController implements Initializable {
 
                 statement.executeUpdate();
                 statement.close();
-                System.out.println("Data added to the database.");
                 data.clear();
                 ViewEtudiant();
                 addEtudiant_apogee.clear();
@@ -335,10 +329,7 @@ public class mainViewController implements Initializable {
     public void ViewEtudiant_presence() {
         try {
             Connection connect = database.connectDB();
-            String sql = """
-                SELECT DISTINCT apogee, name
-                FROM etudiant
-                """;
+            String sql = "SELECT DISTINCT etudiant.apogee, etudiant.name, etudiant.id_filiere FROM etudiant JOIN module ON etudiant.id_semestre = module.id_semestre AND etudiant.id_filiere = module.id_filiere WHERE module.id_prof = '"+usernameLogin+"'";
             PreparedStatement stat = connect.prepareStatement(sql);
             ResultSet rs = stat.executeQuery();
 
@@ -355,7 +346,7 @@ public class mainViewController implements Initializable {
             presene_table.setItems(data2);
 
             // filiere
-            String SqlFiliere = "SELECT nom_filiere FROM filiere";
+            String SqlFiliere = "SELECT DISTINCT(filiere.nom_filiere) FROM filiere JOIN module ON module.id_filiere = filiere.id_filiere WHERE module.id_prof = '"+usernameLogin+"'";
             PreparedStatement stat2 = connect.prepareStatement(SqlFiliere);
             ResultSet rs2 = stat2.executeQuery();
             ObservableList dataFiliere = FXCollections.observableArrayList();
@@ -376,7 +367,7 @@ public class mainViewController implements Initializable {
 
         try {
             // Prepare the SQL statement to retrieve modules based on filiere
-            String sqlModule = "SELECT nom_module FROM module WHERE id_filiere = (SELECT id_filiere FROM filiere WHERE nom_filiere = ?)";
+            String sqlModule = "SELECT nom_module FROM module WHERE id_filiere = (SELECT id_filiere FROM filiere WHERE nom_filiere = ?) AND id_prof = '"+usernameLogin+"'";
             PreparedStatement stat3 = connect.prepareStatement(sqlModule);
             stat3.setString(1, selectedFiliere);
             ResultSet rs3 = stat3.executeQuery();
@@ -408,7 +399,6 @@ public class mainViewController implements Initializable {
             e.printStackTrace();
         }
     }
-    // Helper method to get absence count for a given apogee
     private void handleModuleSelection(Connection connect) {
         String selectedFiliere = presence_filiere.getValue();
         String selectedModule = presence_module.getValue();
