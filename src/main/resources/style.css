@@ -17,3 +17,9 @@
 .btn_deconnecter:hover{
     -fx-background-color:  #2da9d2;
 }
+.btn_accueil{
+    -fx-background-color:  #2da9d2;
+}
+.label-clicked {
+    -fx-background-color:  #2da9d2;
+}

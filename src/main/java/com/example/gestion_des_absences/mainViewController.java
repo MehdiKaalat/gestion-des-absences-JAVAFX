@@ -52,6 +52,16 @@ public class mainViewController implements Initializable {
     private AnchorPane presence; // Value injected by FXMLLoader
 
     @FXML
+    private Pane btn_accueil;
+    @FXML
+    private Pane btn_liste_etu;
+    @FXML
+    private Pane btn_presence;
+
+    @FXML
+    private Pane btn_propos;
+
+    @FXML
     private TextField addEtudiant_apogee;
 
     @FXML
@@ -623,6 +633,11 @@ public class mainViewController implements Initializable {
         fct_nbClasse();
         fct_nbFiliere();
         fct_nbAbsence();
+        btn_accueil.getStyleClass().add("btn_accueil");
+        btn_presence.getStyleClass().remove("label-clicked");
+        btn_liste_etu.getStyleClass().remove("label-clicked");
+        btn_propos.getStyleClass().remove("label-clicked");
+
     }
 
     @FXML
@@ -631,6 +646,10 @@ public class mainViewController implements Initializable {
         a_propos.setVisible(false);
         liste_etu.setVisible(true);
         presence.setVisible(false);
+        btn_accueil.getStyleClass().remove("btn_accueil");
+        btn_presence.getStyleClass().remove("label-clicked");
+        btn_liste_etu.getStyleClass().add("label-clicked");
+        btn_propos.getStyleClass().remove("label-clicked");
     }
 
     @FXML
@@ -640,6 +659,10 @@ public class mainViewController implements Initializable {
         liste_etu.setVisible(false);
         presence.setVisible(true);
         ViewEtudiant_presence();
+        btn_accueil.getStyleClass().remove("btn_accueil");
+        btn_presence.getStyleClass().add("label-clicked");
+        btn_liste_etu.getStyleClass().remove("label-clicked");
+        btn_propos.getStyleClass().remove("label-clicked");
     }
 
     @FXML
@@ -648,22 +671,25 @@ public class mainViewController implements Initializable {
         a_propos.setVisible(true);
         liste_etu.setVisible(false);
         presence.setVisible(false);
+        btn_accueil.getStyleClass().remove("btn_accueil");
+        btn_presence.getStyleClass().remove("label-clicked");
+        btn_liste_etu.getStyleClass().remove("label-clicked");
+        btn_propos.getStyleClass().add("label-clicked");
     }
     @FXML
     void deconnecter_fct(MouseEvent event) throws IOException {
-        deconnecter_btn.getScene().getWindow().hide();
+        Stage currentStage = (Stage) deconnecter_btn.getScene().getWindow();
         Parent root = FXMLLoader.load(getClass().getResource("login-view.fxml"));
+
         Stage stage = new Stage();
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.initStyle(StageStyle.UNDECORATED);
         stage.show();
 
-        // Optional: Close the current stage if needed
-        Stage currentStage = (Stage) deconnecter_btn.getScene().getWindow();
-        currentStage.close();
+        currentStage.hide();
 
-        // Optional: Make the new stage draggable
+        // Make the new stage draggable
         final double initialX = event.getSceneX();
         final double initialY = event.getSceneY();
 
@@ -673,6 +699,9 @@ public class mainViewController implements Initializable {
             stage.setX(mouseEvent.getScreenX() - xOffset);
             stage.setY(mouseEvent.getScreenY() - yOffset);
         });
+
+        // Optional: Close the current stage after a slight delay
+        Platform.runLater(() -> currentStage.close());
     }
 
 
