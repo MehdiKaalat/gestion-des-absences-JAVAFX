@@ -139,7 +139,7 @@
                <center>
                   <AnchorPane prefHeight="464.0" prefWidth="655.0" style="-fx-background-color: #343C4E;" BorderPane.alignment="CENTER">
                      <children>
-                        <AnchorPane fx:id="accueil" prefHeight="436.0" prefWidth="603.3333333333334" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="accueil" prefHeight="436.0" prefWidth="603.3333333333334" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="64.0" layoutY="69.0" prefHeight="139.0" prefWidth="213.0" style="-fx-background-color: #ebebeb; -fx-background-radius: 10px;">
                                  <children>
@@ -234,7 +234,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="presence" layoutX="14.0" layoutY="18.0" prefHeight="436.0" prefWidth="603.3333333333334" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="presence" layoutX="14.0" layoutY="18.0" prefHeight="436.0" prefWidth="603.3333333333334" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <TextField fx:id="presence_rechercher" layoutX="14.0" layoutY="24.0" onKeyReleased="#rechercher_etudiant" prefHeight="25.0" prefWidth="182.0" promptText="Rechercher" />
                               <DatePicker fx:id="presence_date" layoutX="208.0" layoutY="24.0" prefHeight="25.0" prefWidth="127.0" />
