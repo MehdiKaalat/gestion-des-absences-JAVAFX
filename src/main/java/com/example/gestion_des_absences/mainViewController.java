@@ -423,10 +423,10 @@ public class mainViewController implements Initializable {
                 int nbtAbs = rs.getInt("nbtAbs");
                 data.add(new presenceDataWithNbtAbs(apogee, name, nbtAbs));
             }
-            presence_name_col.setCellValueFactory(new PropertyValueFactory<>("name"));
-            presence_apogee_col.setCellValueFactory(new PropertyValueFactory<>("apogee"));
-            presence_present_col.setCellValueFactory(new PropertyValueFactory<>("checkPresence"));
-            presence_nbtAbs_col.setCellValueFactory(new PropertyValueFactory<>("nbtAbs"));
+            presence_name_col.setCellValueFactory(new PropertyValueFactory<presenceData, String>("name"));
+            presence_apogee_col.setCellValueFactory(new PropertyValueFactory<presenceData, Integer>("apogee"));
+            presence_present_col.setCellValueFactory(new PropertyValueFactory<presenceData, CheckBox>("checkPresence"));
+            presence_nbtAbs_col.setCellValueFactory(new PropertyValueFactory<presenceData, Integer>("nbtAbs"));
             presence_nbtAbs_col.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
             presene_table.setItems(data);
             LocalDate selectedDate = presence_date.getValue();
@@ -596,7 +596,7 @@ public class mainViewController implements Initializable {
             selectStatement.setInt(2, moduleId);
             ResultSet resultSet = selectStatement.executeQuery();
 
-            List<Integer> apogeeList = new ArrayList<>();
+            List<Integer> apogeeList = new ArrayList<Integer>();
             while (resultSet.next()) {
                 int apogee = resultSet.getInt("apogee");
                 apogeeList.add(apogee);

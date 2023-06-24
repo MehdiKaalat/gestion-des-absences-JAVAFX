@@ -26,8 +26,6 @@ public class LoginController{
         private PasswordField password;
 
 
-
-
 //        DATABASE TOOLS
         private Connection connect;
         private PreparedStatement prepare;

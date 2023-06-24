@@ -168,7 +168,7 @@
                                  <children>
                                     <AnchorPane layoutY="93.0" prefHeight="46.0" prefWidth="213.0" style="-fx-background-color: #2da9d2; -fx-background-radius: 0 0  10px 10px;">
                                        <children>
-                                          <Label layoutX="87.0" layoutY="12.0" text="Classe(s)" textFill="WHITE">
+                                          <Label layoutX="87.0" layoutY="12.0" text="Module(s)" textFill="WHITE">
                                              <font>
                                                 <Font name="System Bold" size="15.0" />
                                              </font>
@@ -213,7 +213,7 @@
                                  <children>
                                     <AnchorPane layoutY="93.0" prefHeight="46.0" prefWidth="213.0" style="-fx-background-color: #2da9d2; -fx-background-radius: 0 0  10px 10px;">
                                        <children>
-                                          <Label layoutX="92.0" layoutY="12.0" prefHeight="21.0" prefWidth="67.0" text="Filière" textFill="WHITE">
+                                          <Label layoutX="92.0" layoutY="12.0" prefHeight="21.0" prefWidth="67.0" text="Filière(s)" textFill="WHITE">
                                              <font>
                                                 <Font name="System Bold" size="15.0" />
                                              </font>
